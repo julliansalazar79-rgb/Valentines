@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For You hehe❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Indie+Flower&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --gold: #d4af37;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 10px; height: 100dvh; 
+            display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://imgur.com/KJZRFdW.jpg");
+            background-size: cover; background-position: center;
+            font-family: 'Dancing Script', cursive; overflow: hidden;
+        }
+
+        /* Start Overlay - Forces the "First Click" to start music */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(43, 3, 5, 0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; color: white; transition: 0.5s;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            padding: 1.5rem; border-radius: 25px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); width: 100%; max-width: 380px;
+        }
+
+        h1 { color: white; font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        
+        .btn-container { margin-top: 20px; display: flex; justify-content: center; gap: 15px; position: relative; height: 60px; }
+        
+        button { padding: 12px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; font-family: Arial; }
+
+        #yesBtn { background: var(--primary); color: white; }
+        #noBtn { background: rgba(255,255,255,0.25); color: white; position: absolute; transition: 0.1s ease-out; }
+
+        .photo-grid { display: flex; justify-content: center; gap: 8px; margin: 10px 0; height: 130px; }
+        .photo-box { width: 85px; height: 115px; background: white; padding: 5px 5px 15px 5px; box-shadow: 3px 5px 15px rgba(0,0,0,0.5); }
+        .box1 { transform: rotate(-8deg); } .box2 { transform: rotate(4deg); z-index: 2; margin-top: -5px; } .box3 { transform: rotate(-4deg); }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .plans {
+            font-family: 'Indie Flower', cursive; color: #fff; text-align: left;
+            font-size: 1.05rem; padding: 12px; background: rgba(0,0,0,0.4);
+            border-radius: 15px; border-left: 4px solid var(--gold); margin-top: 10px;
+        }
+        .spicy { font-style: italic; color: #ffb7c5; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay" onclick="startExperience()">
+        <h1 style="font-size: 2.5rem;">A Suprise About To Be Unfolded</h1>
+        <p style="font-family: Arial; opacity: 0.8;">(Tap to Open)</p>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://drive.google.com/file/d/1JrsVn_sYFpMJL6-ll9UXMYYK9oRf7qlZ/view?usp=sharing.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+        <div id="ask-content">
+            <h1 id="typewriter"></h1>
+            <div class="btn-container">
+                <button id="yesBtn" onclick="handleYes()">Yes!</button>
+                <button id="noBtn" onmouseover="dodgeButton()" ontouchstart="dodgeButton()">No</button>
+            </div>
+        </div>
+
+        <div id="success-content" style="display:none;">
+            <h1 style="font-size: 1.6rem; margin-bottom: 5px;">So you do still love me, huh😏</h1>
+            <div class="photo-grid">
+                <div class="photo-box box1"><img src="https://imgur.com/H3vYRAk.jpg"></div>
+                <div class="photo-box box2"><img src="https://imgur.com/Wu7wbsY.jpg"></div>
+                <div class="photo-box box3"><img src="https://imgur.com/RwHgbx6.jpg"></div>
+            </div>
+            <div class="plans">
+                <p><strong>Plan A (If the weather is good)</strong>: Somewhere in Legazpi 🏔️😉</p>
+                <p><strong>Plan B (If the weather is bad)</strong>: Somewhere in Bacacay 🌊😝</p>
+                <p> I'll pick you up around <strong>11am</strong>.</p>
+                <p> Make sure to bring some extra clothes with you since It's rainy these days.</p>
+                <p> <strong>Plans after eating:</strong> We'll force our photobooth to happen:3</p>
+                <p class="spicy">If there's still time after all that, perhaps some spiciness between us *wink wink*</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById("bgMusic");
+        const text = "Will you be my Valentine, Ms. Climacosa?";
+        let i = 0;
+
+        function startExperience() {
+            // This click allows the music to play
+            audio.play();
+            document.getElementById('overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'none';
+                typeWriter(); // Starts typing after they "open" the gift
+            }, 500);
+        }
+
+        function typeWriter() {
+            if (i < text.length) {
+                document.getElementById("typewriter").innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+
+        function dodgeButton() {
+            const noBtn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40) + 20;
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40) + 20;
+            noBtn.style.position = "fixed";
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        function handleYes() {
+            document.getElementById('ask-content').style.display = 'none';
+            document.getElementById('success-content').style.display = 'block';
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 } });
+        }
+    </script>
+</body>
+</html>
